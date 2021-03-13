@@ -8,10 +8,10 @@ fetch('http://localhost:3000/games')
 const renderGames = function (games) {
     console.log(games);
 
-    games.forEach(game => {
-        rootEl.innerHTML += 
-        <div>
-            <h2>${game.id}</h2>
-        </div>
-    })
-}
+//     games.forEach(game => {
+//         rootEl.innerHTML += 
+//         <div>
+//             <h2>${game.id}</h2>
+//         </div>
+//     })
+// }
