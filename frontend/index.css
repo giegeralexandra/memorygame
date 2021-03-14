@@ -6,18 +6,44 @@
 
 body {
     height: 100vh; 
+    display: flex; 
+    margin: auto;
     background: black;
 }
 
-memory-card{
-
+section.memory-game {
+    width: 860px;
+    height: 1570px;
+    margin: auto;
+    display: flex; 
+    flex-wrap: wrap;
+    border: 2px solid hotpink
 } 
 
+div.memory-card {
+    width: calc (25% - 10px);
+    height: (25% - 10px);
+    margin: 5px;
+    position: relative;
+    transform: scale 1; 
+}
+
+.front-face,
+div.back-face {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    position: absolute;
+    border-radius: 5px;
+    background: white 
+}
 
 img {
+    height: 300px; 
     width: 200px;
-    height: 300px;
 }
+
+
 
 /* 
 box-sizing: content-box 
