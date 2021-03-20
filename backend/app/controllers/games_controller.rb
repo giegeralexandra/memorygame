@@ -12,7 +12,7 @@ class GamesController < ApplicationController
     def create 
     end
 
-    def delete
+    def show 
     end
 
 end
