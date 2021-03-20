@@ -4,14 +4,89 @@
     box-sizing: border-box;
 }
 
+img {
+    height: 100px; 
+    width: 75px;
+}
+
 body {
+    height: 100vh; 
+    display: flex; 
+    background: blue;
+    /* display: flex;  */
+    /* margin: auto;
+    background: black; */
+}
+
+.memory-game {
+    width: 640px;
+    height: 640px;
+    margin: auto; 
+    display: flex; 
+    flex-wrap: wrap; 
+    perspective: 1000px;
+    border: 2px solid lime;
+
+    /* margin: auto;
+     */
+    
+} 
+
+.memory-card {
+    width: calc(25% - 10px); 
+    height: calc(33.333% - 10px);
+    margin: 5px;
+    position: relative;
+    transform: scale(1);
+    transform-style: preserve-3d;
+    transition: transform .5s;
+
+
+    /* width: calc (25% - 10px);
+    height: (25% - 10px);
+    margin: 5px;
+    position: relative;
+    transform: scale 1;  */
+}
+
+.memory-card:active {
+    transform: scale(.97);
+    transition: transform .2s;
+}
+
+.memory-card.flip {
+    transform: rotateY(180deg);
+}
+
+ 
+.back-face,
+.front-face {
+    width: 100%; 
+    height: 100%;
+    padding: 20px; 
+    position: absolute;
+    border-radius: 5px; 
+    background: lightblue;
+    backface-visibility: hidden;
+}
+
+.back-face{
+    transform: rotateY(180deg);
+}
+
+/* div.memory-card:active {
+    transform: scale(.97); 
+    transition: transform .2s;
+} */
+
+/* body {
     height: 100vh; 
     display: flex; 
     margin: auto;
     background: black;
 }
 
-section.memory-game {
+.memory-game {
     width: 860px;
     height: 1570px;
     margin: auto;
@@ -20,7 +95,7 @@ section.memory-game {
     border: 2px solid hotpink
 } 
 
-div.memory-card {
+.memory-card {
     width: calc (25% - 10px);
     height: (25% - 10px);
     margin: 5px;
@@ -28,21 +103,35 @@ div.memory-card {
     transform: scale 1; 
 }
 
+/* div.memory-card:active {
+    transform: scale(.97); 
+    transition: transform .2s;
+} */
+/* 
+.memory-card.flip {
+    transform: rotateY(180deg);  
+}
+
 .front-face,
-div.back-face {
+.back-face {
     width: 100%;
     height: 100%;
     padding: 20px;
     position: absolute;
     border-radius: 5px;
-    background: white 
+    background: white; 
+    backface-visibility: hidden;
+}
+
+div.front-face {
+    transform: rotateY(180deg);
 }
 
 img {
     height: 300px; 
     width: 200px;
 }
-
+ */
 
 
 /* 
@@ -51,4 +140,4 @@ wdith: 300px
 height: 200px
 
 memory card div - one holding back face and one holding front face  
-*/
+*/ 
