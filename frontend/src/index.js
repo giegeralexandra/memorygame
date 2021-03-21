@@ -12,6 +12,7 @@ let secondCard;
 let flipped = false; 
 let score = 0;
 let currentGame; 
+let allGames;
 
 // window.addEventListener('DOMContentLoaded', (e) => {
 //     const username = prompt("Please enter username")
@@ -91,7 +92,7 @@ function endGame(){
         currentGame = game
     })
     setTimeout(() => {
-        finalScore.innerHTML += `${currentGame.score} seconds`},1500)
+        finalScore.innerHTML = `Final Score: ${currentGame.score} seconds`},1500)
    //startOver();
 }
 
@@ -185,7 +186,8 @@ let logoutDisplay = () => {
     setTimeout(function(){
     document.querySelector('.welcome-user').innerHTML = `<h3>Welcome ${currentUser.username}</h3>`
     document.querySelector('.user-highest-score').innerHTML = `<h3>${currentUser.username}'s Highest Score: ${currentUser.highest_score}</h3>`
-    // insertHighestScore();
+    //need to fix personal highest score
+    insertHighestScore();
     }, 1500)
     let logout = document.createElement('a')
     logout.href= "javascript:location.reload(true)"
@@ -198,6 +200,21 @@ let logoutDisplay = () => {
 function insertHighestScore() {
     // document.querySelector('.highest-score').innerHTML = `<h3>Game All Time Highest Score: ${Game.highest_score}</h3>`
     //all time highest score 
+    fetch('http://localhost:3000/games')
+    .then((res) => {
+        console.log(res)
+        return res.json()})
+    .then(games => {
+        console.log(games)
+        allGames = games;
+    })
+    setTimeout(function() {
+        allScores = allGames.map(game => {return game.score})
+        highest = Math.min(...allScores)
+        document.querySelector('.highest-score').innerHTML = `<h3>Game All Time Highest Score: ${highest}</h3>`
+
+        
+    },1500)
 }
 
 
