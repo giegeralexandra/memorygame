@@ -4,10 +4,11 @@ const userForm = document.getElementById('user-enter')
 const cards = document.querySelectorAll('.memory-card')
 let username; 
 let signedIn = false; 
-let islocked = true;
-let isFlipped = false; 
+let frozen = false;
 let firstCard; 
 let secondCard; 
+let flipped = false; 
+
 // window.addEventListener('DOMContentLoaded', (e) => {
 //     const username = prompt("Please enter username")
 //     while (username === null || username === ""){
@@ -22,29 +23,49 @@ const init = () => {
 
 function flipCard() {
     if (!signedIn){return;}
+    if (frozen){return};
     this.classList.toggle('flip')
     //check to see if a card is flipped, if flipped assign it to this 
-    if (!firstCard && this.className === "memory-card flip"){
+    
+    if (!flipped){
+        flipped = true; 
         firstCard = this;
-    } else if ((!secondCard && this.className === "memory-card flip")) {
-        console.log(this)
+    } else {
+        //only let two cards be flipped at once 
+        flipped = false;
         secondCard = this;
-        if ((firstCard.innerHTML.slice(-19)) === (secondCard.innerHTML.slice(-19))){
+        //if two cards are flipped, check to see if they match
+        if (firstCard.innerHTML.slice(-19) === secondCard.innerHTML.slice(-19)){
             firstCard.removeEventListener('click', flipCard);
             secondCard.removeEventListener('click', flipCard);
         } else {
-            firstCard.className = "memory-card"
-            firstCard.className = "memory-card"
-
+            frozen = true;
+            setTimeout(function() {
+            firstCard.className = "memory-card";
+            secondCard.className = "memory-card";
+            frozen = false; 
+            }, 2000)
         }
     }
-    //if two cards are flipped, check to see if they match
     
-    //only let two cards be flipped at once 
 }
 
 let activateCards = () => {
     cards.forEach(card => card.addEventListener('click', flipCard));
+}
+
+function userInfo() {
+    
+    fetch('http://localhost:3000/users')
+    .then(res => res.json())
+    .then(users => {
+        const currentUser = users.find(user => {
+            return user.username === username
+        })
+    })
+
+    console.log(currentUser);
+
 }
 
 
@@ -74,6 +95,7 @@ let logoutDisplay = () => {
     let userForm = document.querySelector('.user-form');
     console.log(userForm)
     userForm.hidden = true;
+    userInfo();
     document.querySelector('.welcome-user').innerHTML = `<h3>Welcome!</h3>`
     let logout = document.createElement('a')
     logout.href= "javascript:location.reload(true)"
@@ -104,7 +126,7 @@ function submitUser(data){
 function bindUserFormEventListener() {
     userForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        let username = document.getElementById('username').value;
+        const username = document.getElementById('username').value;
         console.log(username);
         const data = {
             username, 
