@@ -13,6 +13,7 @@ let flipped = false;
 let score = 0;
 let currentGame; 
 let allGames;
+let lastGame;
 
 // window.addEventListener('DOMContentLoaded', (e) => {
 //     const username = prompt("Please enter username")
@@ -90,14 +91,22 @@ function endGame(){
         return res.json();
     }).then(game => {
         currentGame = game
+        lastGame = game
     })
     setTimeout(() => {
         finalScore.innerHTML = `Final Score: ${currentGame.score} seconds`},1500)
-   //startOver();
+   startOver();
+   //have something flash and same game over!!
 }
 
 function startOver(){
-// change flipped cards to not flipped, start new game, keep user
+    window.alert(`Game Over! Final Score: ${currentGame.score}`)
+    setTimeout(function() {
+        cards.forEach(card => {card.className = "memory-card"});
+    },1500)
+    setTimeout(function(){
+        createGame();
+    },1500)
 }
 
 let createGame = () => {
