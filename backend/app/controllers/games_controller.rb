@@ -27,6 +27,7 @@ class GamesController < ApplicationController
         game = Game.find_by(id: params[:id])
         # binding.pry 
         game.end_time = game_params[:end_time]
+        game.score = game.final_score
         # binding.pry
         render json: game 
     end

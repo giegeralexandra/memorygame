@@ -86,10 +86,12 @@ function endGame(){
         }, 
         body: JSON.stringify({game: newData}),
     }).then((res) => {
-        console.log('patch fetch worked');
-        console.log(res.json());
+        return res.json();
+    }).then(game => {
+        currentGame = game
     })
-    finalScore.innerHTML += `${currentGame.score}`
+    setTimeout(() => {
+        finalScore.innerHTML += `${currentGame.score} seconds`},1500)
    //startOver();
 }
 
