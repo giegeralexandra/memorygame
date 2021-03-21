@@ -185,7 +185,6 @@ let logoutDisplay = () => {
     userInfo();
     setTimeout(function(){
     document.querySelector('.welcome-user').innerHTML = `<h3>Welcome ${currentUser.username}</h3>`
-    document.querySelector('.user-highest-score').innerHTML = `<h3>${currentUser.username}'s Highest Score: ${currentUser.highest_score}</h3>`
     //need to fix personal highest score
     insertHighestScore();
     }, 1500)
@@ -209,13 +208,16 @@ function insertHighestScore() {
         allGames = games;
     })
     setTimeout(function() {
-        allScores = allGames.map(game => {return game.score})
-        highest = Math.min(...allScores)
-        document.querySelector('.highest-score').innerHTML = `<h3>Game All Time Highest Score: ${highest}</h3>`
+        let min = Math.min.apply(Math, allGames.map(game => {return game.score == null ? Infinity : game.score;}))
+        let currentUserGames = allGames.filter(game => game.user.username === username)
+        let userMin = Math.min.apply(Math, currentUserGames.map(game => {return game.score == null ? Infinity : game.score;}))
+        document.querySelector('.highest-score').innerHTML = `<h3>Game All Time Highest Score: ${min}</h3>`
+        document.querySelector('.user-highest-score').innerHTML = `<h3>${currentUser.username}'s Highest Score: ${userMin}</h3>`
 
         
     },1500)
 }
+
 
 
 function submitUser(data){
