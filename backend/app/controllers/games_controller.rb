@@ -10,7 +10,7 @@ class GamesController < ApplicationController
     end
 
     def create  
-        game = Game.create(user_id: game_params[:user_id], score: 0, start_time: Time.now)
+        game = Game.create(user_id: game_params[:user_id], start_time: Time.now)
         # binding.pry 
         render json: game
     end
