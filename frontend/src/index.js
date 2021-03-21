@@ -10,6 +10,7 @@ let firstCard;
 let secondCard; 
 let flipped = false; 
 let score = 0;
+let currentGame; 
 
 // window.addEventListener('DOMContentLoaded', (e) => {
 //     const username = prompt("Please enter username")
@@ -51,11 +52,17 @@ function flipCard() {
         
     }
 
-    if (!cards.find(card =>
-        card.class === "memory-game flip"
-        )){
-            endGame();
+
+    let cardsLeft = 0; 
+    cards.forEach(card=>{
+        if (card.className === "memory-card"){
+            cardsLeft +=1;
         }
+    })
+
+    if (cardsLeft === 0) {
+        endGame();
+    }
     // let activateCards = () => {
     //     cards.forEach(card => card.addEventListener('click', flipCard));
     // //TAKES TO FLIP CARDS FUNCTION 
@@ -67,10 +74,11 @@ function flipCard() {
 }
 
 function endGame(){
+    console.log('gameover')
     let newData = {
-        score: getTime(),
+        score: new Date(),
     }
-    fetch('http://localhost:3000/games', {
+    fetch(`http://localhost:3000/games/${currentGame.id}`, {
         method: "PATCH", 
         headers: {
             Accept: "application/json", 
@@ -78,8 +86,8 @@ function endGame(){
         }, 
         body: JSON.stringify({game: newData}),
     }).then((res) => {
-        console.log(res);
         console.log('patch fetch worked');
+        console.log(res.json());
     })
 }
 
@@ -100,11 +108,24 @@ let createGame = () => {
         }, 
         body: JSON.stringify({game: gameData}),
     }).then((res) => {
-        console.log(res);
-        console.log('game fetch worked');
+        return res.json();
+    }).then(game => {
+        currentGame = game;
+    //     currentGame = game;
     })
     activateCards();}, 3000)
 }
+
+// let findGame = function() {
+//     let game = )fetch('http://localhost:3000/games')
+//     .then(res => res.json())
+//     .then(games => {
+//         currentGame = users.find(user => {
+//             return user.username === username});
+//             console.log(currentUser);
+//         })
+//     console.log(currentUser);)
+// }
 
 
 //change activate cards in the create user function
