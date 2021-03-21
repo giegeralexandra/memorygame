@@ -53,8 +53,12 @@ function flipCard() {
 
 let createGame = () => {
     //CREATE a new game and assign to current user
-    const gameData = {
-        currentUser, 
+    
+    setTimeout(function() {
+        console.log(currentUser);
+    console.log('current user');
+        let gameData = {
+        user_id: currentUser.id,
     };
     fetch('http://localhost:3000/games', {
         method: "POST", 
@@ -67,7 +71,7 @@ let createGame = () => {
         console.log(res);
         console.log('game fetch worked');
     })
-    activateCards();
+    activateCards();}, 3000)
 
 }
 
@@ -161,7 +165,7 @@ function bindUserFormEventListener() {
         e.preventDefault();
         username = document.getElementById('username').value;
         console.log(username);
-        const data = {
+        let data = {
             username, 
         };
         submitUser(data);

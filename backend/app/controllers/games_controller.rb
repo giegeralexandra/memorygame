@@ -10,7 +10,8 @@ class GamesController < ApplicationController
     end
 
     def create 
-        game = Game.create(start_time: Time.now, score: 0, turns: 0)
+        
+        game = Game.create(user_id: game_params[:user_id], score: 0, start_time: Time.now)
         binding.pry 
         render json: game
     end
@@ -21,5 +22,12 @@ class GamesController < ApplicationController
 
     def delete
     end
+
+    private 
+    
+    def game_params
+        params.require(:game).permit(:user_id, :score, :id, :start_time)
+    end
+
 
 end
