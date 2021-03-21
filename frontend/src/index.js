@@ -2,20 +2,29 @@
 const rootEl = document.getElementById('root')
 const userForm = document.getElementById('user-enter')
 const cards = document.querySelectorAll('.memory-card')
+let islocked = true;
+// window.addEventListener('DOMContentLoaded', (e) => {
+//     const username = prompt("Please enter username")
+//     while (username === null || username === ""){
+//         username = prompt("Please enter username"
+//     }
+// })
 
 function flipCard() {
-    console.log(this)
+    if(!!islocked){return;}
     this.classList.toggle('flip')
 }
 
-cards.forEach(card => card.addEventListener('click', flipCard));
+let activateCards = () => {
+    isLocked = false; 
+    cards.forEach(card => card.addEventListener('click', flipCard));
+}
 
 
-
-// const init = () => {
-//     // getUsers();
-//     bindUserFormEventListener();
-// }
+const init = () => {
+    // getUsers();
+    bindUserFormEventListener();
+}
 
 // const getUsers = () => {
 //     fetch('http://localhost:3000/users')
@@ -34,31 +43,36 @@ cards.forEach(card => card.addEventListener('click', flipCard));
 //     // })
 // }
 
-// function submitUser(data){
-//     fetch('http://localhost:3000/users', {
-//         method: "POST", 
-//         headers: {
-//             Accept: "application/json", 
-//             "Content-Type": "application/json",
-//         }, 
-//         body: JSON.stringify({user: data}),
-//     }).then((res) => console.log(res));
-// }
 
-// function bindUserFormEventListener() {
-//     userForm.addEventListener('submit', function(e) {
-//         e.preventDefault();
-//         const username = document.getElementById('username').value;
-//         // var formData = new FormData(e.target);
-//         console.log(username);
-//         const data = {
-//             username, 
-//         };
-//         submitUser(data);
-//     })
-// }
+function submitUser(data){
+    fetch('http://localhost:3000/users', {
+        method: "POST", 
+        headers: {
+            Accept: "application/json", 
+            "Content-Type": "application/json",
+        }, 
+        body: JSON.stringify({user: data}),
+    }).then((res) => console.log(res));
+    isLocked = false; 
 
-// init();
+}
+
+function bindUserFormEventListener() {
+    userForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        // var formData = new FormData(e.target);
+        console.log(username);
+        const data = {
+            username, 
+        };
+        submitUser(data);
+        isLocked = false; 
+        activateCards;
+    })
+}
+
+init();
 
 
 // const renderGames = function (games) {

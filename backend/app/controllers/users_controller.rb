@@ -1,25 +1,23 @@
 class UsersController < ApplicationController
 
     def index
-        users = User.all
-        render json: users 
+        @users = User.all
+        render json: @users 
     end
 
-    def new 
+    def show
+        @user = User.find(user_params[:id])
+        render json: @user 
     end
 
     def create
-        user = User.find_or_create_by(username: user_params[:username])
-        if user.save 
-            new = Game.create(user_id: user.id, start_time: Time.now, score: 0)
-            # binding.pry
-            # render json: game
-        end
+        @ser = User.find_or_create_by(username: user_params[:username])
+        render json: @user 
     end
 
     private 
     def user_params
-        params.require(:user).permit(:username)
+        params.require(:user).permit(:id, :username)
     end
 
     
