@@ -78,7 +78,9 @@ function endGame(){
     let newData = {
         score: new Date(),
     }
-    fetch(`http://localhost:3000/games/${currentGame.id}`, {
+    console.log(currentGame)
+    let currentGameId= currentGame.id
+    fetch(`http://localhost:3000/games/${currentGameId}`, {
         method: "PATCH", 
         headers: {
             Accept: "application/json", 
