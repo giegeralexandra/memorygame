@@ -2,6 +2,7 @@
 const rootEl = document.getElementById('root')
 const userForm = document.getElementById('user-enter')
 const cards = document.querySelectorAll('.memory-card')
+const finalScore = document.querySelector('.final-score')
 let username; 
 let currentUser;
 let signedIn = false; 
@@ -63,11 +64,7 @@ function flipCard() {
     if (cardsLeft === 0) {
         endGame();
     }
-    // let activateCards = () => {
-    //     cards.forEach(card => card.addEventListener('click', flipCard));
-    // //TAKES TO FLIP CARDS FUNCTION 
-    // }
-    //if all are flipped, end game 
+
     //end game - stop time - calculate seconds and add as score
     //refresh board, start new game but do not make you sign in 
     //if you close tab, game is deleted
@@ -92,7 +89,7 @@ function endGame(){
         console.log('patch fetch worked');
         console.log(res.json());
     })
-    ///display score 
+    finalScore.innerHTML += `${currentGame.score}`
    //startOver();
 }
 
