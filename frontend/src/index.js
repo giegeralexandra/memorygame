@@ -3,6 +3,7 @@ const rootEl = document.getElementById('root')
 const userForm = document.getElementById('user-enter')
 const cards = document.querySelectorAll('.memory-card')
 let username; 
+let currentUser;
 let signedIn = false; 
 let frozen = false;
 let firstCard; 
@@ -59,12 +60,12 @@ function userInfo() {
     fetch('http://localhost:3000/users')
     .then(res => res.json())
     .then(users => {
-        const currentUser = users.find(user => {
-            return user.username === username
+        currentUser = users.find(user => {
+            return user.username === username});
+            console.log(currentUser);
         })
-    })
-
     console.log(currentUser);
+
 
 }
 
@@ -93,16 +94,22 @@ function userInfo() {
 
 let logoutDisplay = () => {
     let userForm = document.querySelector('.user-form');
-    console.log(userForm)
+    // console.log(userForm)
     userForm.hidden = true;
     userInfo();
-    document.querySelector('.welcome-user').innerHTML = `<h3>Welcome!</h3>`
+    document.querySelector('.welcome-user').innerHTML = `<h3>Welcome ${currentUser.username}</h3>`
+    document.querySelector('.user-highest-score').innerHTML = `<h3>Welcome ${currentUser.highestscore}</h3>`
+    insertHighestScore();
     let logout = document.createElement('a')
     logout.href= "javascript:location.reload(true)"
     logout.className = 'logout-button'
     logout.innerHTML = "logout"
     document.querySelector('.welcome-user').appendChild(logout)
 
+}
+
+function insertHighestScore() {
+    //all time highest score 
 }
 
 
@@ -116,17 +123,20 @@ function submitUser(data){
         body: JSON.stringify({user: data}),
     }).then((res) => {
         console.log(res);
+        console.log('fetch worked');
         isLocked = false;
         signedIn = true;
         activateCards();
     })
-    logoutDisplay();
+    setTimeout(function(){ 
+        logoutDisplay();  
+    },2000)
 }
 
 function bindUserFormEventListener() {
     userForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const username = document.getElementById('username').value;
+        username = document.getElementById('username').value;
         console.log(username);
         const data = {
             username, 
