@@ -51,8 +51,30 @@ function flipCard() {
     
 }
 
+let createGame = () => {
+    //CREATE a new game and assign to current user
+    const gameData = {
+        currentUser, 
+    };
+    fetch('http://localhost:3000/games', {
+        method: "POST", 
+        headers: {
+            Accept: "application/json", 
+            "Content-Type": "application/json",
+        }, 
+        body: JSON.stringify({game: gameData}),
+    }).then((res) => {
+        console.log(res);
+        console.log('game fetch worked');
+    })
+    activateCards();
+
+}
+
+//change activate cards in the create user function
 let activateCards = () => {
     cards.forEach(card => card.addEventListener('click', flipCard));
+//TAKES TO FLIP CARDS FUNCTION 
 }
 
 function userInfo() {
@@ -65,8 +87,6 @@ function userInfo() {
             console.log(currentUser);
         })
     console.log(currentUser);
-
-
 }
 
 
@@ -97,9 +117,11 @@ let logoutDisplay = () => {
     // console.log(userForm)
     userForm.hidden = true;
     userInfo();
+    setTimeout(function(){
     document.querySelector('.welcome-user').innerHTML = `<h3>Welcome ${currentUser.username}</h3>`
-    document.querySelector('.user-highest-score').innerHTML = `<h3>Welcome ${currentUser.highestscore}</h3>`
-    insertHighestScore();
+    document.querySelector('.user-highest-score').innerHTML = `<h3>${currentUser.username}'s Highest Score: ${currentUser.highest_score}</h3>`
+    // insertHighestScore();
+    }, 1500)
     let logout = document.createElement('a')
     logout.href= "javascript:location.reload(true)"
     logout.className = 'logout-button'
@@ -109,6 +131,7 @@ let logoutDisplay = () => {
 }
 
 function insertHighestScore() {
+    // document.querySelector('.highest-score').innerHTML = `<h3>Game All Time Highest Score: ${Game.highest_score}</h3>`
     //all time highest score 
 }
 
@@ -126,7 +149,7 @@ function submitUser(data){
         console.log('fetch worked');
         isLocked = false;
         signedIn = true;
-        activateCards();
+        createGame();
     })
     setTimeout(function(){ 
         logoutDisplay();  
