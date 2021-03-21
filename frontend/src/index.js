@@ -9,6 +9,7 @@ let frozen = false;
 let firstCard; 
 let secondCard; 
 let flipped = false; 
+let score = 0;
 
 // window.addEventListener('DOMContentLoaded', (e) => {
 //     const username = prompt("Please enter username")
@@ -47,8 +48,39 @@ function flipCard() {
             frozen = false; 
             }, 2000)
         }
+        
     }
-    
+
+    if (!cards.find(card =>
+        card.class === "memory-game flip"
+        )){
+            endGame();
+        }
+    // let activateCards = () => {
+    //     cards.forEach(card => card.addEventListener('click', flipCard));
+    // //TAKES TO FLIP CARDS FUNCTION 
+    // }
+    //if all are flipped, end game 
+    //end game - stop time - calculate seconds and add as score
+    //refresh board, start new game but do not make you sign in 
+    //if you close tab, game is deleted
+}
+
+function endGame(){
+    let newData = {
+        score: getTime(),
+    }
+    fetch('http://localhost:3000/games', {
+        method: "PATCH", 
+        headers: {
+            Accept: "application/json", 
+            "Content-Type": "application/json",
+        }, 
+        body: JSON.stringify({game: newData}),
+    }).then((res) => {
+        console.log(res);
+        console.log('patch fetch worked');
+    })
 }
 
 let createGame = () => {
@@ -72,8 +104,8 @@ let createGame = () => {
         console.log('game fetch worked');
     })
     activateCards();}, 3000)
-
 }
+
 
 //change activate cards in the create user function
 let activateCards = () => {
