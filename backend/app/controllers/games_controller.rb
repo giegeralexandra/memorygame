@@ -25,8 +25,9 @@ class GamesController < ApplicationController
 
     def update
         game = Game.find_by(id: params[:id])
-        binding.pry 
-        game.end_time = game_params[:score]
+        # binding.pry 
+        game.end_time = game_params[:end_time]
+        # binding.pry
         render json: game 
     end
 
@@ -37,7 +38,7 @@ class GamesController < ApplicationController
     private 
     
     def game_params
-        params.require(:game).permit(:user_id, :id, :score, :start_time)
+        params.require(:game).permit(:user_id, :id, :score, :start_time, :end_time)
     end
 
 

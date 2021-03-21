@@ -76,9 +76,10 @@ function flipCard() {
 function endGame(){
     console.log('gameover')
     let newData = {
-        score: new Date(),
+        end_time: new Date(),
     }
     console.log(currentGame)
+    
     let currentGameId= currentGame.id
     fetch(`http://localhost:3000/games/${currentGameId}`, {
         method: "PATCH", 
@@ -91,6 +92,12 @@ function endGame(){
         console.log('patch fetch worked');
         console.log(res.json());
     })
+    ///display score 
+   //startOver();
+}
+
+function startOver(){
+// change flipped cards to not flipped, start new game, keep user
 }
 
 let createGame = () => {
