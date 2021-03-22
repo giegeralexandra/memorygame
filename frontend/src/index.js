@@ -94,6 +94,7 @@ function endGame(){
         lastGame = game
     })
     setTimeout(() => {
+        finalScore.className = 'px-4 py-2 border-b border-gray-800'
         finalScore.innerHTML = `Final Score: ${currentGame.score} seconds`},1500)
    startOver();
    //have something flash and same game over!!
@@ -199,7 +200,7 @@ let logoutDisplay = () => {
     }, 1500)
     let logout = document.createElement('a')
     logout.href= "javascript:location.reload(true)"
-    logout.className = 'logout-button'
+    logout.className = 'px-4 py-2 border-gray-800'
     logout.innerHTML = "Logout"
     document.querySelector('.nav-list').appendChild(logout)
 
