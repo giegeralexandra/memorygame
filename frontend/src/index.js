@@ -193,7 +193,7 @@ let logoutDisplay = () => {
     userForm.hidden = true;
     userInfo();
     setTimeout(function(){
-    document.querySelector('.welcome-user').innerHTML = `<h3>Welcome ${currentUser.username}</h3>`
+    document.querySelector('.welcome-user').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">Welcome ${currentUser.username}</h3>`
     //need to fix personal highest score
     insertHighestScore();
     }, 1500)
@@ -220,8 +220,8 @@ function insertHighestScore() {
         let min = Math.min.apply(Math, allGames.map(game => {return game.score == null ? Infinity : game.score;}))
         let currentUserGames = allGames.filter(game => game.user.username === username)
         let userMin = Math.min.apply(Math, currentUserGames.map(game => {return game.score == null ? Infinity : game.score;}))
-        document.querySelector('.highest-score').innerHTML = `<h3>Game All Time Highest Score: ${min}</h3>`
-        document.querySelector('.user-highest-score').innerHTML = `<h3>${currentUser.username}'s Highest Score: ${userMin}</h3>`
+        document.querySelector('.highest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">Game All Time Highest Score: ${min}</h3>`
+        document.querySelector('.user-highest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentUser.username}'s Highest Score: ${userMin}</h3>`
 
         
     },1500)

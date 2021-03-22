@@ -7,35 +7,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memory Game</title> -->
     
-    <link rel="stylesheet" href="src/index.css">
+    <link rel="stylesheet" href="public/styles.css">
 </head>
-<body>   
+<body class="text-gray-600">   
 
-    <div>
-        <nav>
+    <div class="bg-gray-300">
+        <nav >
             <div class="user-form">
-                <h3>Please login to continue</h3>
-                <br>
-                <form id= "user-enter">
-                    <label for="username" >
-                        Username 
-                    </label>
+                <p class= "px-4 py-4">Login to Play</p>
+                <form class= "px-4" id= "user-enter">
+                    <p>Username: </p>
+                    <br>
                     <input type="text" name="user[username]" id="username">
-                    <br><input type="submit" name="submit" id="submit">
+                    <br><br>
+                    <input type="submit" name="submit" id="submit">
                 </form>
             </div> 
             <ul class="nav-list">
                 <li class="welcome-user">
-                    <h4></h4>
                 </li><br>
                 <li class="user-highest-score">
-                    <h4></h4>
                 </li><br>
                 <li class="highest-score">
-                    <h4></h4>
                 </li><br>
                 <li class="final-score">
-                    <h4></h4>
                 </li><br>
             </ul>
             
