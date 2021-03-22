@@ -90,18 +90,27 @@ function endGame(){
     }).then((res) => {
         return res.json();
     }).then(game => {
+        console.log(game)
         currentGame = game
-        lastGame = game
+        
     })
-    setTimeout(() => {
-        finalScore.className = 'px-4 py-2 border-b border-gray-800'
-        finalScore.innerHTML = `Final Score: ${currentGame.score} seconds`},1500)
-   startOver();
+    setTimeout( () => {
+        console.log(currentGame)
+        console.log('thisiscurrentgame')
+        window.alert(`Game Over! Final Score: ${currentGame.score}`)
+        finalScore.innerHTML = `Final Score: ${currentGame.score} seconds`,
+        finalScore.className = 'px-4 py-2 border-b border-gray-800',
+        insertHighestScore()
+        }, 5000)
+    setTimeout( ()=> {
+        startOver()}, 10000)
+    }
+    
+   
    //have something flash and same game over!!
-}
 
 function startOver(){
-    window.alert(`Game Over! Final Score: ${currentGame.score}`)
+    console.log('made it to start over')
     setTimeout(function() {
         cards.forEach(card => {card.className = "memory-card"});
     },1500)
@@ -133,6 +142,16 @@ let createGame = () => {
     //     currentGame = game;
     })
     activateCards();}, 3000)
+}
+
+function shuffleCards() {
+
+    let memoryGame = document.querySelector('.memory-game');
+    var frag = document.createDocumentFragment();
+    while(cards.length){
+        frag.appendChild(cards[Math.floor(Math.random() * cards.length)])
+    }
+    memoryGame.appendChild(frag);
 }
 
 // let findGame = function() {
@@ -217,15 +236,21 @@ function insertHighestScore() {
         console.log(games)
         allGames = games;
     })
-    setTimeout(function() {
-        let min = Math.min.apply(Math, allGames.map(game => {return game.score == null ? Infinity : game.score;}))
+    
+    setTimeout(function(){
+        console.log(allGames)
+        gameMin = Math.min.apply(Math, allGames.map(game => {return game.score == null ? Infinity : game.score;}))
         let currentUserGames = allGames.filter(game => game.user.username === username)
-        let userMin = Math.min.apply(Math, currentUserGames.map(game => {return game.score == null ? Infinity : game.score;}))
-        document.querySelector('.highest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">Game All Time Highest Score: ${min}</h3>`
-        document.querySelector('.user-highest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentUser.username}'s Highest Score: ${userMin}</h3>`
+        userMin = Math.min.apply(Math, currentUserGames.map(game => {return game.score == null ? Infinity : game.score;}))
+    },2000)
+    setTimeout(function() {
+        console.log(gameMin)
+        console.log(userMin)
+        document.querySelector('.highest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">Game All Time Highest Score: ${gameMin} seconds</h3>`
+        document.querySelector('.user-highest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentUser.username}'s Highest Score: ${userMin} seconds</h3>`
 
         
-    },1500)
+    },4000)
 }
 
 
