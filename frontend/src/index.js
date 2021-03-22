@@ -200,7 +200,7 @@ let logoutDisplay = () => {
     let logout = document.createElement('a')
     logout.href= "javascript:location.reload(true)"
     logout.className = 'logout-button'
-    logout.innerHTML = "logout"
+    logout.innerHTML = "Logout"
     document.querySelector('.nav-list').appendChild(logout)
 
 }
