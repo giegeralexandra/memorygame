@@ -1,27 +1,15 @@
 {
-    "name": "memorygame",
-    "version": "1.0.0",
-    "description": "Memory Game",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/giegeralexandra/memorygame/tree/master"
-    },
-    "main": "postcss.config.js",
-    "dependencies": {
-        "autoprefixer": "^9.6.0",
-        "postcss-cli": "^6.1.2",
-        "rimraf": "^2.6.3"
-    },
-    "devDependencies": {
-        "@fullhuman/postcss-purgecss": "^1.2.0",
-        "cssnano": "^4.1.10",
-        "tailwindcss": "^1.0.3"
-    },
-    "scripts": {
-        "del:js": "rimraf tailwind.config.js",
-        "create:js": "./node_modules/.bin/tailwind init tailwind.config.js",
-        "dev:css": "./node_modules/.bin/tailwind build tailwind.config.css -c tailwind.config.js -o dist/css/tailwind.css",
-        "build:css": "postcss tailwind.config.css -o dist/css/tailwind.min.css"
-    }
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "tailwindcss": "^2.0.4"
+  }
 }
