@@ -12,6 +12,8 @@ let secondCard;
 let flipped = false; 
 let score = 0;
 let currentGame; 
+let gameMin;
+let userMin;
 let allGames;
 let lastGame;
 const usersUrl = 'http://localhost:3000/users';
@@ -76,9 +78,10 @@ class User {
             signedIn = true,
             Game.createGame()
         })
-        setTimeout(function(){ 
-            logoutDisplay();  
-        },2000)
+        // setTimeout(function(){ 
+        //     logoutDisplay();  
+        // },1000)
+        logoutDisplay();
     }
 
     // static userInfo() {
@@ -96,27 +99,13 @@ class User {
 
 class Game {
 
-    constructor(id, startTime, userId){
+    constructor(id, startTime, userId, score){
         this.id = id, 
         this.startTime = startTime, 
-        this.userId = userId
+        this.userId = userId,
+        this.score = null
     }
 
-    set endTime(endTime) {
-        this.endTime = endTime; 
-    }
-
-    set score(score) {
-        this.score = score;
-    }
-
-    get score() {
-        return this.score; 
-    }
-
-    get endTime() {
-        return this.endTime; 
-    }
 
     static createGame() {
         this.shuffleCards();
@@ -170,8 +159,8 @@ class Game {
             secondCard = this;
             //if two cards are flipped, check to see if they match
             if (firstCard.innerHTML.slice(-19) === secondCard.innerHTML.slice(-19)){
-                firstCard.removeEventListener('click', flipCard);
-                secondCard.removeEventListener('click', flipCard);
+                firstCard.removeEventListener('click', Game.flipCard.bind(firstCard));
+                secondCard.removeEventListener('click', Game.flipCard.bind(secondCard));
             } else {
                 frozen = true;
                 setTimeout(function() {
@@ -189,7 +178,7 @@ class Game {
             })
         
             if (cardsLeft === 0) {
-                endGame();
+                Game.endGame();
             }
         }
 
@@ -202,7 +191,7 @@ class Game {
             end_time: new Date(),
         }
 
-        fetch(`http://localhost:3000/games/${currentGameId}`, {
+        fetch(`http://localhost:3000/games/${currentGame.id}`, {
             method: "PATCH", 
             headers: {
                 Accept: "application/json", 
@@ -212,7 +201,7 @@ class Game {
         }).then((res) => {
             return res.json();
         }).then(game => {
-            currentGame.endTime = game.end_time,
+            console.log(game),
             currentGame.score = game.score
         })
         setTimeout( () => {
@@ -268,7 +257,7 @@ let logoutDisplay = () => {
     setTimeout(function(){
     document.querySelector('.welcome-user').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">Welcome ${currentPuser.username}</h3>`
     //need to fix personal highest score
-    insertFastestScore();
+    Game.insertFastestScore();
     }, 1500)
     let logout = document.createElement('a')
     logout.href= "javascript:location.reload(true)"
