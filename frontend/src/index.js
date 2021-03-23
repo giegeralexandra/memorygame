@@ -15,6 +15,7 @@ let currentGame;
 let allGames;
 let lastGame;
 const usersUrl = 'http://localhost:3000/users';
+let currentPuser;
 
 // window.addEventListener('DOMContentLoaded', (e) => {
 //     const username = prompt("Please enter username")
@@ -30,8 +31,19 @@ const init = () => {
 
 class User {
 
-    constructor(username){
+    constructor(username, id, games){
         this.username = username
+        this.id = id 
+        this.games = games 
+    }
+
+    static getUsers() {
+        fetch(usersUrl)
+        .then(res => res.json())
+        .then(users => {
+            allUsers = users;
+            return users;
+        })
     }
 
     static bindUserFormEventListener() {
@@ -43,8 +55,6 @@ class User {
             };
             User.submitUser(data);
         })
-    
-    
     }
 
     static submitUser(data){
@@ -57,32 +67,65 @@ class User {
             body: JSON.stringify({user: data}),
         }).then((res) => {
             return res.json()
-        }).then(data => {console.log(data),
-            console.log('fetch worked'),
-            isLocked = false,
+        }).then(user => {
+            currentPuser = new User(user.username, user.id, user.games),
+            console.log('user fetch worked'),
+            frozen = false,
             signedIn = true,
-            createGame()
+            Game.createGame()
         })
         setTimeout(function(){ 
             logoutDisplay();  
         },2000)
     }
 
-    
+    // static userInfo() {
+    //     fetch(usersUrl)
+    //     .then(res => res.json())
+    //     .then(users => {
+    //         currentUser = users.find(user => {
+    //             return user.username === username});
+    //             console.log(currentUser);
+    //         })
+    //     console.log(currentUser);
+    // }
     
 }
 
+class Game {
 
-function userInfo() {
-    fetch('http://localhost:3000/users')
-    .then(res => res.json())
-    .then(users => {
-        currentUser = users.find(user => {
-            return user.username === username});
+    constructor(){
+
+    }
+
+    static createGame() {
+        //CREATE a new game and assign to current user
+        shuffleCards();
+        setTimeout(function() {
             console.log(currentUser);
+        console.log('current user');
+            let gameData = {
+            user_id: currentPuser.id,
+        };
+        fetch('http://localhost:3000/games', {
+            method: "POST", 
+            headers: {
+                Accept: "application/json", 
+                "Content-Type": "application/json",
+            }, 
+            body: JSON.stringify({game: gameData}),
+        }).then((res) => {
+            return res.json();
+        }).then(game => {
+            currentGame = game;
+        //     currentGame = game;
         })
-    console.log(currentUser);
+        activateCards();}, 3000)
+    }
+
+
 }
+
 
 function flipCard() {
     if (!signedIn){return;}
@@ -181,30 +224,7 @@ function startOver(){
     },1500)
 }
 
-let createGame = () => {
-    //CREATE a new game and assign to current user
-    shuffleCards();
-    setTimeout(function() {
-        console.log(currentUser);
-    console.log('current user');
-        let gameData = {
-        user_id: currentUser.id,
-    };
-    fetch('http://localhost:3000/games', {
-        method: "POST", 
-        headers: {
-            Accept: "application/json", 
-            "Content-Type": "application/json",
-        }, 
-        body: JSON.stringify({game: gameData}),
-    }).then((res) => {
-        return res.json();
-    }).then(game => {
-        currentGame = game;
-    //     currentGame = game;
-    })
-    activateCards();}, 3000)
-}
+
 
 function shuffleCards() {
     console.log('shufflecards')
@@ -262,9 +282,8 @@ let logoutDisplay = () => {
     let userForm = document.querySelector('.user-form');
     // console.log(userForm)
     userForm.hidden = true;
-    userInfo();
     setTimeout(function(){
-    document.querySelector('.welcome-user').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">Welcome ${currentUser.username}</h3>`
+    document.querySelector('.welcome-user').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">Welcome ${currentPuser.username}</h3>`
     //need to fix personal highest score
     insertFastestScore();
     }, 1500)
@@ -296,7 +315,7 @@ function insertFastestScore() {
         console.log(gameMin)
         console.log(userMin)
         document.querySelector('.fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">All Time Fastest Time: ${gameMin} seconds</h3>`
-        document.querySelector('.user-fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentUser.username}'s Fastest Time: ${userMin} seconds</h3>`
+        document.querySelector('.user-fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentPuser.username}'s Fastest Time: ${userMin} seconds</h3>`
 
         
     },4000)
