@@ -11282,10 +11282,6 @@ video {
   clear: none;
 }
 
-.font-body{
-  font-family: Bebas Neue;
-}
-
 .font-sans{
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
@@ -41911,10 +41907,6 @@ video {
     clear: none;
   }
 
-  .sm\:font-body{
-    font-family: Bebas Neue;
-  }
-
   .sm\:font-sans{
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   }
@@ -72460,10 +72452,6 @@ video {
 
   .md\:clear-none{
     clear: none;
-  }
-
-  .md\:font-body{
-    font-family: Bebas Neue;
   }
 
   .md\:font-sans{
@@ -103013,10 +103001,6 @@ video {
     clear: none;
   }
 
-  .lg\:font-body{
-    font-family: Bebas Neue;
-  }
-
   .lg\:font-sans{
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   }
@@ -133564,10 +133548,6 @@ video {
     clear: none;
   }
 
-  .xl\:font-body{
-    font-family: Bebas Neue;
-  }
-
   .xl\:font-sans{
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   }
@@ -164113,10 +164093,6 @@ video {
 
   .\32xl\:clear-none{
     clear: none;
-  }
-
-  .\32xl\:font-body{
-    font-family: Bebas Neue;
   }
 
   .\32xl\:font-sans{

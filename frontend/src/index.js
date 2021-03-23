@@ -22,6 +22,10 @@ let lastGame;
 //     }
 // })
 
+document.addEventListener('dblclick', function(e){
+    e.preventDefault();
+})
+
 const init = () => {
     // getUsers();
     bindUserFormEventListener();
@@ -38,6 +42,9 @@ function flipCard() {
         firstCard = this;
     } else {
         //only let two cards be flipped at once 
+        if(this===firstCard){
+            return;
+        }
         flipped = false;
         secondCard = this;
         //if two cards are flipped, check to see if they match
@@ -97,14 +104,16 @@ function endGame(){
     setTimeout( () => {
         console.log(currentGame)
         console.log('thisiscurrentgame')
-        window.alert(`Game Over! Final Score: ${currentGame.score}`)
-        finalScore.innerHTML = `Final Score: ${currentGame.score} seconds`,
+        window.alert(`Game Over! Final Time: ${currentGame.score} seconds`)
+        finalScore.innerHTML = `Final Time: ${currentGame.score} seconds`,
         finalScore.className = 'px-4 py-2 border-b border-gray-800',
-        insertHighestScore()
+        insertFastestScore()
         }, 5000)
     setTimeout( ()=> {
         startOver()}, 10000)
     }
+
+    
     
    
    //have something flash and same game over!!
@@ -121,7 +130,7 @@ function startOver(){
 
 let createGame = () => {
     //CREATE a new game and assign to current user
-    
+    shuffleCards();
     setTimeout(function() {
         console.log(currentUser);
     console.log('current user');
@@ -145,12 +154,12 @@ let createGame = () => {
 }
 
 function shuffleCards() {
-
+    console.log('shufflecards')
     let memoryGame = document.querySelector('.memory-game');
     var frag = document.createDocumentFragment();
-    while(cards.length){
-        frag.appendChild(cards[Math.floor(Math.random() * cards.length)])
-    }
+    cards.forEach( card => {
+        frag.appendChild(cards[Math.floor(Math.random() * 18)])
+    })
     memoryGame.appendChild(frag);
 }
 
@@ -215,9 +224,12 @@ let logoutDisplay = () => {
     setTimeout(function(){
     document.querySelector('.welcome-user').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">Welcome ${currentUser.username}</h3>`
     //need to fix personal highest score
-    insertHighestScore();
+    insertFastestScore();
     }, 1500)
     let logout = document.createElement('a')
+    logout.addEventListener('dblclick', function(e){
+        e.preventDefault();
+    })
     logout.href= "javascript:location.reload(true)"
     logout.className = 'px-4 py-2 border-gray-800'
     logout.innerHTML = "Logout"
@@ -225,9 +237,7 @@ let logoutDisplay = () => {
 
 }
 
-function insertHighestScore() {
-    // document.querySelector('.highest-score').innerHTML = `<h3>Game All Time Highest Score: ${Game.highest_score}</h3>`
-    //all time highest score 
+function insertFastestScore() {
     fetch('http://localhost:3000/games')
     .then((res) => {
         console.log(res)
@@ -246,8 +256,8 @@ function insertHighestScore() {
     setTimeout(function() {
         console.log(gameMin)
         console.log(userMin)
-        document.querySelector('.highest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">Game All Time Highest Score: ${gameMin} seconds</h3>`
-        document.querySelector('.user-highest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentUser.username}'s Highest Score: ${userMin} seconds</h3>`
+        document.querySelector('.fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">All Time Fastest Time: ${gameMin} seconds</h3>`
+        document.querySelector('.user-fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentUser.username}'s Fastest Time: ${userMin} seconds</h3>`
 
         
     },4000)
@@ -285,6 +295,8 @@ function bindUserFormEventListener() {
         };
         submitUser(data);
     })
+
+
 }
 
 init();
