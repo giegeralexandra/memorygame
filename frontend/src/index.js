@@ -14,6 +14,7 @@ let score = 0;
 let currentGame; 
 let allGames;
 let lastGame;
+const usersUrl = 'http://localhost:3000/users';
 
 // window.addEventListener('DOMContentLoaded', (e) => {
 //     const username = prompt("Please enter username")
@@ -22,13 +23,65 @@ let lastGame;
 //     }
 // })
 
-document.addEventListener('dblclick', function(e){
-    e.preventDefault();
-})
-
 const init = () => {
-    // getUsers();
-    bindUserFormEventListener();
+    User.bindUserFormEventListener();
+}
+
+
+class User {
+
+    constructor(username){
+        this.username = username
+    }
+
+    static bindUserFormEventListener() {
+        userForm.addEventListener('submit', function(e) {
+            e.preventDefault(); //prevents page from refreshing
+            username = document.getElementById('username').value;
+            let data = {
+                username, 
+            };
+            User.submitUser(data);
+        })
+    
+    
+    }
+
+    static submitUser(data){
+        fetch(usersUrl, {
+            method: "POST", 
+            headers: {
+                Accept: "application/json", 
+                "Content-Type": "application/json",
+            }, 
+            body: JSON.stringify({user: data}),
+        }).then((res) => {
+            return res.json()
+        }).then(data => {console.log(data),
+            console.log('fetch worked'),
+            isLocked = false,
+            signedIn = true,
+            createGame()
+        })
+        setTimeout(function(){ 
+            logoutDisplay();  
+        },2000)
+    }
+
+    
+    
+}
+
+
+function userInfo() {
+    fetch('http://localhost:3000/users')
+    .then(res => res.json())
+    .then(users => {
+        currentUser = users.find(user => {
+            return user.username === username});
+            console.log(currentUser);
+        })
+    console.log(currentUser);
 }
 
 function flipCard() {
@@ -181,17 +234,6 @@ let activateCards = () => {
 //TAKES TO FLIP CARDS FUNCTION 
 }
 
-function userInfo() {
-    
-    fetch('http://localhost:3000/users')
-    .then(res => res.json())
-    .then(users => {
-        currentUser = users.find(user => {
-            return user.username === username});
-            console.log(currentUser);
-        })
-    console.log(currentUser);
-}
 
 
 
@@ -227,9 +269,6 @@ let logoutDisplay = () => {
     insertFastestScore();
     }, 1500)
     let logout = document.createElement('a')
-    logout.addEventListener('dblclick', function(e){
-        e.preventDefault();
-    })
     logout.href= "javascript:location.reload(true)"
     logout.className = 'px-4 py-2 border-gray-800'
     logout.innerHTML = "Logout"
@@ -265,39 +304,9 @@ function insertFastestScore() {
 
 
 
-function submitUser(data){
-    fetch('http://localhost:3000/users', {
-        method: "POST", 
-        headers: {
-            Accept: "application/json", 
-            "Content-Type": "application/json",
-        }, 
-        body: JSON.stringify({user: data}),
-    }).then((res) => {
-        console.log(res);
-        console.log('fetch worked');
-        isLocked = false;
-        signedIn = true;
-        createGame();
-    })
-    setTimeout(function(){ 
-        logoutDisplay();  
-    },2000)
-}
-
-function bindUserFormEventListener() {
-    userForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        username = document.getElementById('username').value;
-        console.log(username);
-        let data = {
-            username, 
-        };
-        submitUser(data);
-    })
 
 
-}
+
 
 init();
 
