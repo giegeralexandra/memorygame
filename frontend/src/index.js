@@ -16,6 +16,8 @@ let allGames;
 let lastGame;
 const usersUrl = 'http://localhost:3000/users';
 let currentPuser;
+let memoryGame = document.querySelector('.memory-game');
+const gamesUrl = 'http://localhost:3000/games';
 
 // window.addEventListener('DOMContentLoaded', (e) => {
 //     const username = prompt("Please enter username")
@@ -94,20 +96,20 @@ class User {
 
 class Game {
 
-    constructor(){
-
+    constructor(id, startTime, userId){
+        this.id = id, 
+        this.startTime = startTime, 
+        this.userId = userId
     }
 
+    
     static createGame() {
-        //CREATE a new game and assign to current user
-        shuffleCards();
+        this.shuffleCards();
         setTimeout(function() {
-            console.log(currentUser);
-        console.log('current user');
             let gameData = {
             user_id: currentPuser.id,
-        };
-        fetch('http://localhost:3000/games', {
+            };
+        fetch(gamesUrl, {
             method: "POST", 
             headers: {
                 Accept: "application/json", 
@@ -117,10 +119,22 @@ class Game {
         }).then((res) => {
             return res.json();
         }).then(game => {
-            currentGame = game;
-        //     currentGame = game;
+            currentGame = new Game(game.id, game.start_time, game.user_id)
         })
-        activateCards();}, 3000)
+        this.activateCards();}, 3000)
+    }
+
+    static shuffleCards() {
+        console.log('shufflecards')
+        var frag = document.createDocumentFragment();
+        cards.forEach( card => {
+            frag.appendChild(cards[Math.floor(Math.random() * 18)])
+        })
+        memoryGame.appendChild(frag);
+    }
+
+    static activateCardsListener() {
+        cards.forEach(card => card.addEventListener('click', flipCard));
     }
 
 
@@ -226,15 +240,7 @@ function startOver(){
 
 
 
-function shuffleCards() {
-    console.log('shufflecards')
-    let memoryGame = document.querySelector('.memory-game');
-    var frag = document.createDocumentFragment();
-    cards.forEach( card => {
-        frag.appendChild(cards[Math.floor(Math.random() * 18)])
-    })
-    memoryGame.appendChild(frag);
-}
+
 
 // let findGame = function() {
 //     let game = )fetch('http://localhost:3000/games')
@@ -248,11 +254,7 @@ function shuffleCards() {
 // }
 
 
-//change activate cards in the create user function
-let activateCards = () => {
-    cards.forEach(card => card.addEventListener('click', flipCard));
-//TAKES TO FLIP CARDS FUNCTION 
-}
+
 
 
 
