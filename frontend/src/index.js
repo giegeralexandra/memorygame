@@ -102,7 +102,22 @@ class Game {
         this.userId = userId
     }
 
-    
+    set endTime(endTime) {
+        this.endTime = endTime; 
+    }
+
+    set score(score) {
+        this.score = score;
+    }
+
+    get score() {
+        return this.score; 
+    }
+
+    get endTime() {
+        return this.endTime; 
+    }
+
     static createGame() {
         this.shuffleCards();
         setTimeout(function() {
@@ -121,7 +136,7 @@ class Game {
         }).then(game => {
             currentGame = new Game(game.id, game.start_time, game.user_id)
         })
-        this.activateCards();}, 3000)
+        Game.activateCardsListener();}, 3000)
     }
 
     static shuffleCards() {
@@ -134,151 +149,117 @@ class Game {
     }
 
     static activateCardsListener() {
-        cards.forEach(card => card.addEventListener('click', flipCard));
+        cards.forEach(card => card.addEventListener('click', Game.flipCard.bind(card)));
     }
 
 
-}
-
-
-function flipCard() {
-    if (!signedIn){return;}
-    if (frozen){return};
-    this.classList.toggle('flip')
-    //check to see if a card is flipped, if flipped assign it to this 
-    
-    if (!flipped){
-        flipped = true; 
-        firstCard = this;
-    } else {
-        //only let two cards be flipped at once 
-        if(this===firstCard){
-            return;
-        }
-        flipped = false;
-        secondCard = this;
-        //if two cards are flipped, check to see if they match
-        if (firstCard.innerHTML.slice(-19) === secondCard.innerHTML.slice(-19)){
-            firstCard.removeEventListener('click', flipCard);
-            secondCard.removeEventListener('click', flipCard);
+    static flipCard() {
+        if (!signedIn){return;}
+        if (frozen){return};
+        console.log(this)
+        this.classList.toggle('flip')
+        //check to see if a card is flipped, if flipped assign it to this 
+        
+        if (!flipped){
+            flipped = true; 
+            firstCard = this;
         } else {
-            frozen = true;
-            setTimeout(function() {
-            firstCard.className = "memory-card";
-            secondCard.className = "memory-card";
-            frozen = false; 
-            }, 2000)
-        }
+            //to prevent double clicking first card
+            if(this===firstCard){return;}
+            flipped = false;
+            secondCard = this;
+            //if two cards are flipped, check to see if they match
+            if (firstCard.innerHTML.slice(-19) === secondCard.innerHTML.slice(-19)){
+                firstCard.removeEventListener('click', flipCard);
+                secondCard.removeEventListener('click', flipCard);
+            } else {
+                frozen = true;
+                setTimeout(function() {
+                firstCard.className = "memory-card";
+                secondCard.className = "memory-card";
+                frozen = false; 
+                }, 2000)
+            }
+
+            let cardsLeft = 0; 
+            cards.forEach(card=>{
+                if (card.className === "memory-card"){
+                    cardsLeft +=1;
+                }
+            })
         
-    }
-
-
-    let cardsLeft = 0; 
-    cards.forEach(card=>{
-        if (card.className === "memory-card"){
-            cardsLeft +=1;
+            if (cardsLeft === 0) {
+                endGame();
+            }
         }
-    })
 
-    if (cardsLeft === 0) {
-        endGame();
+
     }
 
-    //end game - stop time - calculate seconds and add as score
-    //refresh board, start new game but do not make you sign in 
-    //if you close tab, game is deleted
-}
+    static endGame(){
+        console.log('gameover')
+        let newData = {
+            end_time: new Date(),
+        }
 
-function endGame(){
-    console.log('gameover')
-    let newData = {
-        end_time: new Date(),
+        fetch(`http://localhost:3000/games/${currentGameId}`, {
+            method: "PATCH", 
+            headers: {
+                Accept: "application/json", 
+                "Content-Type": "application/json",
+            }, 
+            body: JSON.stringify({game: newData}),
+        }).then((res) => {
+            return res.json();
+        }).then(game => {
+            currentGame.endTime = game.end_time,
+            currentGame.score = game.score
+        })
+        setTimeout( () => {
+            console.log(currentGame)
+            console.log('thisiscurrentgame')
+            window.alert(`Game Over! Final Time: ${currentGame.score} seconds`)
+            finalScore.innerHTML = `Final Time: ${currentGame.score} seconds`,
+            finalScore.className = 'px-4 py-2 border-b border-gray-800',
+            Game.insertFastestScore()
+            }, 5000)
+        setTimeout( ()=> {
+            Game.startOver()}, 10000)
     }
-    console.log(currentGame)
-    
-    let currentGameId= currentGame.id
-    fetch(`http://localhost:3000/games/${currentGameId}`, {
-        method: "PATCH", 
-        headers: {
-            Accept: "application/json", 
-            "Content-Type": "application/json",
-        }, 
-        body: JSON.stringify({game: newData}),
-    }).then((res) => {
-        return res.json();
-    }).then(game => {
-        console.log(game)
-        currentGame = game
         
-    })
-    setTimeout( () => {
-        console.log(currentGame)
-        console.log('thisiscurrentgame')
-        window.alert(`Game Over! Final Time: ${currentGame.score} seconds`)
-        finalScore.innerHTML = `Final Time: ${currentGame.score} seconds`,
-        finalScore.className = 'px-4 py-2 border-b border-gray-800',
-        insertFastestScore()
-        }, 5000)
-    setTimeout( ()=> {
-        startOver()}, 10000)
+
+    static insertFastestScore() {
+        fetch(gamesUrl)
+        .then((res) => {
+            return res.json()})
+        .then(games => {
+            allGames = games;
+        })
+        
+        setTimeout(function(){
+            console.log(allGames)
+            gameMin = Math.min.apply(Math, allGames.map(game => {return game.score == null ? Infinity : game.score;}))
+            let currentUserGames = allGames.filter(game => game.user.username === username)
+            userMin = Math.min.apply(Math, currentUserGames.map(game => {return game.score == null ? Infinity : game.score;}))
+        },2000)
+        setTimeout(function() {
+            console.log(gameMin)
+            console.log(userMin)
+            document.querySelector('.fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">All Time Fastest Time: ${gameMin} seconds</h3>`
+            document.querySelector('.user-fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentPuser.username}'s Fastest Time: ${userMin} seconds</h3>`
+        },4000)
     }
 
-    
-    
-   
-   //have something flash and same game over!!
-
-function startOver(){
-    console.log('made it to start over')
-    setTimeout(function() {
-        cards.forEach(card => {card.className = "memory-card"});
-    },1500)
-    setTimeout(function(){
-        createGame();
-    },1500)
+    static startOver(){
+        console.log('made it to start over')
+        setTimeout(function() {
+            cards.forEach(card => {card.className = "memory-card"});
+        },1500)
+        setTimeout(function(){
+            Game.createGame();
+        },1500)
+    }
 }
-
-
-
-
-
-// let findGame = function() {
-//     let game = )fetch('http://localhost:3000/games')
-//     .then(res => res.json())
-//     .then(games => {
-//         currentGame = users.find(user => {
-//             return user.username === username});
-//             console.log(currentUser);
-//         })
-//     console.log(currentUser);)
-// }
-
-
-
-
-
-
-
-
-
-
-// const getUsers = () => {
-//     fetch('http://localhost:3000/users')
-//     .then(res => res.json())
-//     .then(data => enterUser(data));
-// }
-
-// const enterUser = function(users) {
-//     console.log(users);
-
-//     // games.forEach(game => {
-//     //     rootEl.innerHTML += 
-//     //     <div>
-//     //         <h2>${game.id}</h2>
-//     //     </div>
-//     // })
-// }
-
 
 let logoutDisplay = () => {
     let userForm = document.querySelector('.user-form');
@@ -297,40 +278,36 @@ let logoutDisplay = () => {
 
 }
 
-function insertFastestScore() {
-    fetch('http://localhost:3000/games')
-    .then((res) => {
-        console.log(res)
-        return res.json()})
-    .then(games => {
-        console.log(games)
-        allGames = games;
-    })
-    
-    setTimeout(function(){
-        console.log(allGames)
-        gameMin = Math.min.apply(Math, allGames.map(game => {return game.score == null ? Infinity : game.score;}))
-        let currentUserGames = allGames.filter(game => game.user.username === username)
-        userMin = Math.min.apply(Math, currentUserGames.map(game => {return game.score == null ? Infinity : game.score;}))
-    },2000)
-    setTimeout(function() {
-        console.log(gameMin)
-        console.log(userMin)
-        document.querySelector('.fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">All Time Fastest Time: ${gameMin} seconds</h3>`
-        document.querySelector('.user-fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentPuser.username}'s Fastest Time: ${userMin} seconds</h3>`
-
-        
-    },4000)
-}
-
-
-
-
-
-
-
 init();
 
+// let findGame = function() {
+//     let game = )fetch('http://localhost:3000/games')
+//     .then(res => res.json())
+//     .then(games => {
+//         currentGame = users.find(user => {
+//             return user.username === username});
+//             console.log(currentUser);
+//         })
+//     console.log(currentUser);)
+// }
+
+
+// const getUsers = () => {
+//     fetch('http://localhost:3000/users')
+//     .then(res => res.json())
+//     .then(data => enterUser(data));
+// }
+
+// const enterUser = function(users) {
+//     console.log(users);
+
+//     // games.forEach(game => {
+//     //     rootEl.innerHTML += 
+//     //     <div>
+//     //         <h2>${game.id}</h2>
+//     //     </div>
+//     // })
+// }
 
 // const renderGames = function (games) {
 //     console.log(games);
