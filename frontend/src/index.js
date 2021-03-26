@@ -108,7 +108,7 @@ class Game {
         setTimeout(function() {
         welcomeNavBarDisplay();
         Game.createGame();
-        Game.activateCardsListener();}, 200)
+        Game.activateCardsListener();}, 300)
     }
 
     static createGame(){
@@ -234,12 +234,12 @@ class Game {
         setTimeout(function(){
             Game.fastestGame();
             Game.userFastestGame()
-        }, 300)
+        }, 500)
         setTimeout(function() {
             console.log(userMin)
             document.querySelector('.fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">All Time Fastest Time: ${gameMin} seconds</h3>`
             document.querySelector('.user-fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentUser.username}'s Fastest Time: ${userMin} seconds</h3>`
-        },600)
+        },800)
     }
 
     static fastestGame(){
