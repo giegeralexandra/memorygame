@@ -1,9 +1,7 @@
 //make a fetch request to get the data from our server
-const rootEl = document.getElementById('root')
 const userSubmit = document.getElementById('user-enter')
 const cards = document.querySelectorAll('.memory-card')
 const finalScore = document.querySelector('.final-score')
-let username; 
 let currentUser;
 let signedIn = false; 
 let frozen = false;
@@ -22,12 +20,6 @@ const gamesUrl = 'http://localhost:3000/games';
 let userForm = document.querySelector('.user-form')
 let welcomeUser = document.querySelector('.welcome-user');
 
-// window.addEventListener('DOMContentLoaded', (e) => {
-//     const username = prompt("Please enter username")
-//     while (username === null || username === ""){
-//         username = prompt("Please enter username"
-//     }
-// })
 
 const init = () => {
     User.userFormEventListener();
@@ -54,7 +46,7 @@ class User {
     static userFormEventListener() {
         userSubmit.addEventListener('submit', function(e) {
             e.preventDefault(); //prevents page from refreshing
-            username = document.getElementById('username').value;
+            let username = document.getElementById('username').value;
             let data = {
                 username, 
             };
@@ -107,6 +99,15 @@ class Game {
         this.startTime = startTime, 
         this.userId = userId,
         this.score = null
+    }
+
+    static getGames(){
+        fetch(gamesUrl)
+        .then((res) => {
+            return res.json()})
+        .then(games => {
+            allGames = games;
+        })
     }
 
 
@@ -239,22 +240,13 @@ class Game {
         
 
     static insertFastestScores() {
-        fetch(gamesUrl)
-        .then((res) => {
-            return res.json()})
-        .then(games => {
-            allGames = games;
-        })
-        
+        Game.getGames();
         setTimeout(function(){
-            console.log(allGames)
             gameMin = Math.min.apply(Math, allGames.map(game => {return game.score == null ? Infinity : game.score;}))
             let currentUserGames = allGames.filter(game => game.user.username === username)
             userMin = Math.min.apply(Math, currentUserGames.map(game => {return game.score == null ? Infinity : game.score;}))
         },2000)
         setTimeout(function() {
-            console.log(gameMin)
-            console.log(userMin)
             document.querySelector('.fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">All Time Fastest Time: ${gameMin} seconds</h3>`
             document.querySelector('.user-fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentUser.username}'s Fastest Time: ${userMin} seconds</h3>`
         },4000)
@@ -285,48 +277,3 @@ function welcomeNavBarDisplay(){
 }
 
 init();
-
-// let findGame = function() {
-//     let game = )fetch('http://localhost:3000/games')
-//     .then(res => res.json())
-//     .then(games => {
-//         currentGame = users.find(user => {
-//             return user.username === username});
-//             console.log(currentUser);
-//         })
-//     console.log(currentUser);)
-// }
-
-
-// const getUsers = () => {
-//     fetch('http://localhost:3000/users')
-//     .then(res => res.json())
-//     .then(data => enterUser(data));
-// }
-
-// const enterUser = function(users) {
-//     console.log(users);
-
-//     // games.forEach(game => {
-//     //     rootEl.innerHTML += 
-//     //     <div>
-//     //         <h2>${game.id}</h2>
-//     //     </div>
-//     // })
-// }
-
-// const renderGames = function (games) {
-//     console.log(games);
-
-// //     games.forEach(game => {
-// //         rootEl.innerHTML += 
-// //         <div>
-// //             <h2>${game.id}</h2>
-// //         </div>
-// //     })
-// }
-
-// fetch('http://localhost:3000/games')
-// .then(res => res.json())
-// .then(data => renderGames(data));
-
