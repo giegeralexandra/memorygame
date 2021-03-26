@@ -5,7 +5,6 @@ class CreateGames < ActiveRecord::Migration[6.0]
       t.integer :score
       t.datetime  :start_time
       t.datetime :end_time
-      t.integer :turns
 
       t.timestamps
     end
