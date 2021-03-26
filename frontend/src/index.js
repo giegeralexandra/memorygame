@@ -103,7 +103,7 @@ class Game {
 
 
     static startGame() {
-        // this.shuffleCards();
+        this.shuffleCards();
         Game.insertFastestScores();
         setTimeout(function() {
         welcomeNavBarDisplay();
@@ -194,7 +194,6 @@ class Game {
     }
 
     static endGame(){
-        console.log('gameover')
         this.updateScore();
         setTimeout( () => {
             window.alert(`Game Over! Final Time: ${currentGame.score} seconds`)

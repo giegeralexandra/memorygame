@@ -11,7 +11,6 @@ class GamesController < ApplicationController
 
     def create  
         game = Game.create(user_id: game_params[:user_id], start_time: Time.now)
-        # binding.pry 
         render json: game
     end
 
@@ -25,11 +24,9 @@ class GamesController < ApplicationController
 
     def update
         game = Game.find_by(id: params[:id])
-        # binding.pry 
         game.end_time = game_params[:end_time]
         game.score = game.final_score
         game.save
-        # binding.pry
         render json: game 
     end
 
