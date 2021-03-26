@@ -1,6 +1,6 @@
 //make a fetch request to get the data from our server
 const rootEl = document.getElementById('root')
-const userForm = document.getElementById('user-enter')
+const userSubmit = document.getElementById('user-enter')
 const cards = document.querySelectorAll('.memory-card')
 const finalScore = document.querySelector('.final-score')
 let username; 
@@ -17,9 +17,10 @@ let userMin;
 let allGames;
 let lastGame;
 const usersUrl = 'http://localhost:3000/users';
-let currentPuser;
 let memoryGame = document.querySelector('.memory-game');
 const gamesUrl = 'http://localhost:3000/games';
+let userForm = document.querySelector('.user-form')
+let welcomeUser = document.querySelector('.welcome-user');
 
 // window.addEventListener('DOMContentLoaded', (e) => {
 //     const username = prompt("Please enter username")
@@ -29,7 +30,7 @@ const gamesUrl = 'http://localhost:3000/games';
 // })
 
 const init = () => {
-    User.bindUserFormEventListener();
+    User.userFormEventListener();
 }
 
 
@@ -50,8 +51,8 @@ class User {
         })
     }
 
-    static bindUserFormEventListener() {
-        userForm.addEventListener('submit', function(e) {
+    static userFormEventListener() {
+        userSubmit.addEventListener('submit', function(e) {
             e.preventDefault(); //prevents page from refreshing
             username = document.getElementById('username').value;
             let data = {
@@ -72,16 +73,18 @@ class User {
         }).then((res) => {
             return res.json()
         }).then(user => {
-            currentPuser = new User(user.username, user.id, user.games),
-            console.log('user fetch worked'),
-            frozen = false,
-            signedIn = true,
-            Game.createGame()
+            User.assignUser(user);
+            // console.log('user fetch worked'),
         })
-        // setTimeout(function(){ 
-        //     logoutDisplay();  
-        // },1000)
-        logoutDisplay();
+        logoutNavBarDisplay();
+        frozen = false,
+        signedIn = true,
+        Game.startGame()
+        
+    }
+
+    static assignUser(user){
+        currentUser = new User(user.username, user.id, user.games)
     }
 
     // static userInfo() {
@@ -107,12 +110,19 @@ class Game {
     }
 
 
-    static createGame() {
-        this.shuffleCards();
+    static startGame() {
+        // this.shuffleCards();
         setTimeout(function() {
-            let gameData = {
-            user_id: currentPuser.id,
-            };
+        welcomeNavBarDisplay();
+        Game.insertFastestScores();
+        Game.createGame();
+        Game.activateCardsListener();}, 100)
+    }
+
+    static createGame(){
+        let gameData = {
+            user_id: currentUser.id,
+        };
         fetch(gamesUrl, {
             method: "POST", 
             headers: {
@@ -123,9 +133,8 @@ class Game {
         }).then((res) => {
             return res.json();
         }).then(game => {
-            currentGame = new Game(game.id, game.start_time, game.user_id)
+            Game.setCurrentGame(game);
         })
-        Game.activateCardsListener();}, 3000)
     }
 
     static shuffleCards() {
@@ -137,61 +146,78 @@ class Game {
         memoryGame.appendChild(frag);
     }
 
+    static setCurrentGame(game){
+        currentGame = new Game(game.id, game.start_time, game.user_id)
+
+    }
+
     static activateCardsListener() {
         cards.forEach(card => card.addEventListener('click', Game.flipCard.bind(card)));
     }
 
-
     static flipCard() {
-        if (!signedIn){return;}
-        if (frozen){return};
-        console.log(this)
+        if (!signedIn){return;} //dont give flip card access if not signed in
+        if (frozen){return}; //give flip card access if frozen 
         this.classList.toggle('flip')
         //check to see if a card is flipped, if flipped assign it to this 
-        
         if (!flipped){
             flipped = true; 
             firstCard = this;
         } else {
-            //to prevent double clicking first card
-            if(this===firstCard){return;}
+            if(this===firstCard){return;}//to prevent double clicking first card
             flipped = false;
             secondCard = this;
             //if two cards are flipped, check to see if they match
-            if (firstCard.innerHTML.slice(-19) === secondCard.innerHTML.slice(-19)){
-                firstCard.removeEventListener('click', Game.flipCard.bind(firstCard));
-                secondCard.removeEventListener('click', Game.flipCard.bind(secondCard));
-            } else {
-                frozen = true;
-                setTimeout(function() {
-                firstCard.className = "memory-card";
-                secondCard.className = "memory-card";
-                frozen = false; 
-                }, 2000)
-            }
-
-            let cardsLeft = 0; 
-            cards.forEach(card=>{
-                if (card.className === "memory-card"){
-                    cardsLeft +=1;
-                }
-            })
-        
-            if (cardsLeft === 0) {
-                Game.endGame();
-            }
+            Game.checkForMatch();
+            Game.checkForGameOver();
         }
 
 
     }
 
+    static checkForMatch(){
+        if (firstCard.innerHTML.slice(-19) === secondCard.innerHTML.slice(-19)){
+            firstCard.removeEventListener('click', Game.flipCard.bind(firstCard));
+            secondCard.removeEventListener('click', Game.flipCard.bind(secondCard));
+        } else {
+            frozen = true;
+            setTimeout(function() {
+            firstCard.className = "memory-card";
+            secondCard.className = "memory-card";
+            frozen = false; 
+            }, 2000)
+        }
+    }
+
+    static checkForGameOver(){
+        let cardsLeft = 0; 
+        cards.forEach(card=>{
+            if (card.className === "memory-card"){
+                cardsLeft +=1;
+            }
+        })
+        if (cardsLeft === 0) {
+            Game.endGame();
+        }
+    }
+
     static endGame(){
         console.log('gameover')
+        this.updateScore();
+        setTimeout( () => {
+            window.alert(`Game Over! Final Time: ${currentGame.score} seconds`)
+            this.finalScoreNavBarDisplay();
+            Game.insertFastestScores();
+            }, 5000)
+        setTimeout( ()=> {
+            Game.startOver()}, 10000)
+    }
+
+    static updateScore(){
         let newData = {
             end_time: new Date(),
         }
-
-        fetch(`http://localhost:3000/games/${currentGame.id}`, {
+        fetch(`${gamesUrl}/${currentGame.id}`, {
             method: "PATCH", 
             headers: {
                 Accept: "application/json", 
@@ -201,23 +227,18 @@ class Game {
         }).then((res) => {
             return res.json();
         }).then(game => {
-            console.log(game),
+            // console.log(game),
             currentGame.score = game.score
         })
-        setTimeout( () => {
-            console.log(currentGame)
-            console.log('thisiscurrentgame')
-            window.alert(`Game Over! Final Time: ${currentGame.score} seconds`)
-            finalScore.innerHTML = `Final Time: ${currentGame.score} seconds`,
-            finalScore.className = 'px-4 py-2 border-b border-gray-800',
-            Game.insertFastestScore()
-            }, 5000)
-        setTimeout( ()=> {
-            Game.startOver()}, 10000)
+    }
+
+    static finalScoreNavBarDisplay(){
+        finalScore.innerHTML = `Final Time: ${currentGame.score} seconds`,
+        finalScore.className = 'px-4 py-2 border-b border-gray-800'
     }
         
 
-    static insertFastestScore() {
+    static insertFastestScores() {
         fetch(gamesUrl)
         .then((res) => {
             return res.json()})
@@ -235,7 +256,7 @@ class Game {
             console.log(gameMin)
             console.log(userMin)
             document.querySelector('.fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">All Time Fastest Time: ${gameMin} seconds</h3>`
-            document.querySelector('.user-fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentPuser.username}'s Fastest Time: ${userMin} seconds</h3>`
+            document.querySelector('.user-fastest-score').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">${currentUser.username}'s Fastest Time: ${userMin} seconds</h3>`
         },4000)
     }
 
@@ -250,21 +271,17 @@ class Game {
     }
 }
 
-let logoutDisplay = () => {
-    let userForm = document.querySelector('.user-form');
-    // console.log(userForm)
+let logoutNavBarDisplay = () => {
     userForm.hidden = true;
-    setTimeout(function(){
-    document.querySelector('.welcome-user').innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">Welcome ${currentPuser.username}</h3>`
-    //need to fix personal highest score
-    Game.insertFastestScore();
-    }, 1500)
     let logout = document.createElement('a')
     logout.href= "javascript:location.reload(true)"
     logout.className = 'px-4 py-2 border-gray-800'
     logout.innerHTML = "Logout"
     document.querySelector('.nav-list').appendChild(logout)
+}
 
+function welcomeNavBarDisplay(){
+    welcomeUser.innerHTML = `<h3 class= "px-4 py-2 border-b border-gray-800">Welcome ${currentUser.username}</h3>`
 }
 
 init();

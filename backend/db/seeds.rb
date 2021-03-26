@@ -8,5 +8,5 @@
 
 User.create(username: "algieg")
 User.create(username: "augieg")
-Game.create(user_id: 1, score: 45, turns: 16)
-Game.create(user_id: 2, score: 65, turns: 12)
+Game.create(user_id: 1, score: 1000, turns: 16)
+Game.create(user_id: 2, score: 800, turns: 12)
