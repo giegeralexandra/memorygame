@@ -20,7 +20,6 @@ ActiveRecord::Schema.define(version: 2021_03_13_180752) do
     t.integer "score"
     t.datetime "start_time"
     t.datetime "end_time"
-    t.integer "turns"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
