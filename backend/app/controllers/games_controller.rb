@@ -23,6 +23,7 @@ class GamesController < ApplicationController
     end
 
     def update
+        #binding.pry
         game = Game.find_by(id: params[:id])
         game.end_time = game_params[:end_time]
         game.score = game.final_score
